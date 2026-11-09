@@ -1,0 +1,46 @@
+# Passeurs des anciennes adresses GitHub Pages (ECOSYSTEME.md §7.4, chantier B, étape 4).
+# Ce dépôt est le site utilisateur https://django184.github.io/ : GitHub Pages le publie lui-même
+# depuis main (publication par branche, sans Jekyll grâce à .nojekyll). Ce workflow teste les
+# passeurs dans Chromium, puis vérifie que le site en ligne sert bien les fichiers de ce commit.
+name: Tests et site publié
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # Le 1er de chaque mois : un dépôt de projet qui republierait son site masquerait un passeur.
+    - cron: "41 5 1 * *"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Installer Playwright (Chromium)
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Passeurs de bout en bout (autodestruction, transfert, effacement, voisines intactes)
+        run: node tests/passeurs.mjs
+
+  en_ligne:
+    needs: tests
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Site publié (fichiers de ce commit servis, anciennes adresses)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node tests/en_ligne.mjs https://django184.github.io

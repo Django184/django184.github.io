@@ -1,0 +1,8 @@
+{
+  "description": "Passeurs des anciennes adresses GitHub Pages vers les nouvelles origines (ECOSYSTEME.md §7.4).",
+  "version": 2,
+  "passeurs": {
+    "/panier-temoin/": "https://panier-temoin.pages.dev/",
+    "/minuterie/": "https://ma-journee-2q9.pages.dev/"
+  }
+}

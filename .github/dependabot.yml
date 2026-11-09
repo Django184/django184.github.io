@@ -1,0 +1,7 @@
+# Signale les mises à jour des actions GitHub utilisées par la CI (D-009).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

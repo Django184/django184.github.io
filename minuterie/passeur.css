@@ -1,0 +1,7 @@
+:root { color-scheme: light dark; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+body { margin: 0; padding: 2rem 1rem; line-height: 1.5; }
+main { max-width: 30rem; margin: 0 auto; }
+h1 { font-size: 1.375rem; }
+a { color: #8B3E6C; font-weight: 600; }
+@media (prefers-color-scheme: dark) { a { color: #E08AB9; } }
+.aide { color: GrayText; font-size: 0.875rem; }
