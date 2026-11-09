@@ -26,7 +26,7 @@ Ce que chaque passeur efface :
 
 ## Fonctionnement de la publication
 
-- GitHub Pages publie ce dépôt depuis `main`, à la racine, sans Jekyll (`.nojekyll`).
+- La CI publie le site (Settings → Pages → Source : « GitHub Actions ») après les tests, à chaque envoi sur `main` : seulement `passeurs.json` et les dossiers qu'il liste, pas les tests ni la documentation.
 - Un dépôt de projet du même nom qui publie encore son site **masque** le dossier correspondant d'ici : c'est pourquoi le dépôt d'une app ne passe en privé qu'une fois son passeur ici.
 - Les dépôts des apps récupèrent leur passeur ici pour leur test du changement d'adresse de bout en bout (seule source du passeur).
 

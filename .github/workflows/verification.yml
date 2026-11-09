@@ -1,8 +1,9 @@
 # Passeurs des anciennes adresses GitHub Pages (ECOSYSTEME.md §7.4, chantier B, étape 4).
-# Ce dépôt est le site utilisateur https://django184.github.io/ : GitHub Pages le publie lui-même
-# depuis main (publication par branche, sans Jekyll grâce à .nojekyll). Ce workflow teste les
-# passeurs dans Chromium, puis vérifie que le site en ligne sert bien les fichiers de ce commit.
-name: Tests et site publié
+# Ce dépôt est le site utilisateur https://django184.github.io/ (Settings → Pages → Source :
+# « GitHub Actions »). Ce workflow teste les passeurs dans Chromium, publie seulement les fichiers
+# du site (passeurs.json et les dossiers des passeurs, pas les tests), puis vérifie que le site en
+# ligne sert bien les fichiers de ce commit.
+name: Tests et publication
 
 on:
   push:
@@ -31,9 +32,37 @@ jobs:
       - name: Passeurs de bout en bout (autodestruction, transfert, effacement, voisines intactes)
         run: node tests/passeurs.mjs
 
-  en_ligne:
+  publication:
     needs: tests
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fichiers du site (passeurs.json et dossiers listés)
+        run: |
+          mkdir _site
+          cp passeurs.json _site/
+          for chemin in $(jq -r '.passeurs | keys[]' passeurs.json); do cp -r ".${chemin%/}" "_site${chemin%/}"; done
+          find _site -type f | sort
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deploiement
+        uses: actions/deploy-pages@v5
+
+  en_ligne:
+    needs: publication
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
